@@ -1,5 +1,6 @@
 # BuildProcess
-Standard build process for libraries
+
+Wrapper around the Cake build system for building C# projects and producing nuget packages.
 
 ## Use
 
