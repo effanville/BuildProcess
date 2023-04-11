@@ -1,7 +1,12 @@
-﻿using Nuke.Common;
+﻿using Microsoft.Build.Construction;
+using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitVersion;
+using System;
+using System.Linq;
+using Serilog;
 
 namespace _build;
 
@@ -10,16 +15,18 @@ partial class Build : NukeBuild
     Target PublishExe => _ => _
         .DependsOn(Compile)
         .DependsOn(Test)
+        .Produces()
         .Executes(() =>
         {
-            var publishDir = _userConfiguration.DefaultPublishDir;
-            foreach (var project in _userConfiguration.ExecutablePublishProjects)
+            foreach (string project in _userConfiguration.ExecutablePublishProjects)
             {
                 Project projectString = Solution.GetProject(project);
-                string version = projectString.GetProperty("version");
-                // set the version properly 
+                var projectRootElement = ProjectRootElement.Open(projectString);
+                ProjectPropertyElement versionElement = projectRootElement.AllChildren.First(e => e.ElementName == "VersionPrefix") as ProjectPropertyElement;
+                Version version = new Version(versionElement.Value);
+
                 DotNetTasks.DotNetPublish(s => s
-                    .SetProject(project)
+                    .SetProject(projectString)
                     .SetConfiguration(Configuration)
                     .SetFramework(Framework)
                     .SetOutput(_userConfiguration.DefaultPublishDir)
@@ -28,9 +35,16 @@ partial class Build : NukeBuild
                     .EnablePublishReadyToRun()
                     .EnableNoRestore()
                     .EnableNoBuild()
-                    .SetVersion(version));
+                    .SetVersion(version.ToString()));
 
-                // preferably do a git tag here somehow.
+                try
+                {
+                    var output = GitTasks.Git($"tag {project}/{version.Major}.{version.Minor}/{version}", logOutput: true);
+                }
+                catch (Exception)
+                {
+                    Log.Warning("Could not create git tag.");
+                }
             }
         });
 }

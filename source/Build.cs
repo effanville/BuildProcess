@@ -1,19 +1,16 @@
-using System;
-using System.Linq;
 using Nuke.Common;
-using Nuke.Common.CI;
-using Nuke.Common.Execution;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
-using Nuke.Common.Utilities.Collections;
-
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Git;
 using Nuke.Common.Tools.GitVersion;
 
 namespace _build;
 
+[GitHubActions(
+    "continuous",
+    GitHubActionsImage.UbuntuLatest,
+    On = new[] { GitHubActionsTrigger.Push },
+    InvokedTargets = new[] { nameof(Compile) })]
 partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -25,7 +22,10 @@ partial class Build : NukeBuild
     static AbsolutePath _outputDirectory => RootDirectory / "output";
     static AbsolutePath _binDir => RootDirectory / "bin";
 
-    static UserConfiguration _userConfiguration = UserConfiguration.ReadConfig((RootDirectory / "build.config").Name);
+    readonly static UserConfiguration _userConfiguration = new UserConfiguration((RootDirectory / "build.config"));
+
+    [GitVersion(NoCache = true, UpdateBuildNumber = true, Framework = "net6.0")]
+    GitVersion _gitVersion;
 
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;

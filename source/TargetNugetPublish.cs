@@ -1,6 +1,11 @@
-﻿using Nuke.Common;
+﻿using Microsoft.Build.Construction;
+using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.Git;
+using Serilog;
+using System;
+using System.Linq;
 
 namespace _build;
 
@@ -11,20 +16,33 @@ partial class Build : NukeBuild
         .DependsOn(Test)
         .Executes(() =>
         {
-            var publishDir = _userConfiguration.DefaultPublishDir;
-            foreach (var project in _userConfiguration.NugetPackageProjects)
+            string publishDir = _userConfiguration.DefaultPublishDir;
+            foreach (string project in _userConfiguration.NugetPackageProjects)
             {
                 Project projectString = Solution.GetProject(project);
-                // need to set the version of the nupkg properly here.
+
+                var projectRootElement = ProjectRootElement.Open(projectString);
+                ProjectPropertyElement versionElement = projectRootElement.AllChildren.First(e => e.ElementName == "VersionPrefix") as ProjectPropertyElement;
+                Version version = new Version(versionElement.Value);
 
                 DotNetTasks.DotNetPack(s => s
-                    .SetProject(project)
+                    .SetProject(projectString)
                     .SetConfiguration(Configuration)
                     .SetOutputDirectory(_userConfiguration.DefaultPublishDir)
                     .EnablePublishSingleFile()
                     .EnablePublishReadyToRun()
+                    .SetAssemblyVersion(version.ToString())
                     .EnableNoRestore()
                     .EnableNoBuild());
+
+                try
+                {
+                    var output = GitTasks.Git($"tag {project}/{version.Major}.{version.Minor}/{version}", logOutput: true);
+                }
+                catch (Exception)
+                {
+                    Log.Warning("Could not create git tag.");
+                }
             }
         });
 }

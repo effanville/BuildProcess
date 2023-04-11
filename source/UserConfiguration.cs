@@ -45,9 +45,19 @@ public sealed class UserConfiguration
     {
     }
 
+    public UserConfiguration(string configFilePath)
+    {
+        var config = ReadConfig(configFilePath);
+        ExecutablePublishProjects = config.ExecutablePublishProjects;
+        NugetPackageProjects = config.NugetPackageProjects;
+        DefaultBuildConfiguration = config.DefaultBuildConfiguration;
+        DefaultFramework = config.DefaultFramework;
+        DefaultRuntime = config.DefaultRuntime;
+        DefaultPublishDir = config.DefaultPublishDir;
+    }
+
     public static UserConfiguration ReadConfig(string configFilePath)
     {
-        // deserialize JSON directly from a file
         using (StreamReader file = File.OpenText(configFilePath))
         {
             JsonSerializer serializer = new JsonSerializer();

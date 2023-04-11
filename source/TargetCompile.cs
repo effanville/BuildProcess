@@ -1,5 +1,7 @@
 ﻿using Nuke.Common;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitVersion;
+using Serilog;
 
 namespace _build;
 
