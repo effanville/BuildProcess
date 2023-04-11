@@ -8,9 +8,9 @@ namespace _build;
 
 [GitHubActions(
     "continuous",
-    GitHubActionsImage.UbuntuLatest,
+    GitHubActionsImage.WindowsLatest,
     On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(Compile) })]
+    InvokedTargets = new[] { nameof(Publish) })]
 partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -39,5 +39,10 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = _userConfiguration.DefaultConfiguration;
 
-    public static int Main() => Execute<Build>(x => x.PublishExe, x => x.PublishNuget);
+    public static int Main() => Execute<Build>(x => x.Publish);
+
+    Target Publish => _ => _
+        .DependsOn(PublishExe)
+        .DependsOn(PublishNuget)
+        .Executes();
 }
