@@ -2,7 +2,6 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tools.GitVersion;
 
 namespace _build;
 
@@ -28,9 +27,6 @@ partial class Build : NukeBuild
     static AbsolutePath PackageOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "package";
 
     readonly static UserConfiguration _userConfiguration = new UserConfiguration((RootDirectory / "build.config"));
-
-    [GitVersion(NoCache = true, UpdateBuildNumber = true, Framework = "net6.0")]
-    readonly GitVersion _gitVersion;
 
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;
