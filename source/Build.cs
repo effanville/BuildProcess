@@ -10,7 +10,9 @@ namespace _build;
     "continuous",
     GitHubActionsImage.WindowsLatest,
     On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(Publish) })]
+    InvokedTargets = new[] { nameof(Publish) },
+    Submodules = GitHubActionsSubmodules.Recursive,
+    AutoGenerate = true)]
 partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -18,14 +20,17 @@ partial class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-    static AbsolutePath _sourceDirectory => RootDirectory / "src";
-    static AbsolutePath _outputDirectory => RootDirectory / "output";
-    static AbsolutePath _binDir => RootDirectory / "bin";
+    static AbsolutePath SourceDirectory => RootDirectory / "src";
+    static AbsolutePath OutputDirectory => RootDirectory / "output";
+    static AbsolutePath BinDir => RootDirectory / "bin";
+
+    static AbsolutePath BinOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "bin";
+    static AbsolutePath PackageOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "package";
 
     readonly static UserConfiguration _userConfiguration = new UserConfiguration((RootDirectory / "build.config"));
 
     [GitVersion(NoCache = true, UpdateBuildNumber = true, Framework = "net6.0")]
-    GitVersion _gitVersion;
+    readonly GitVersion _gitVersion;
 
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;

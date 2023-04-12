@@ -5,6 +5,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Serilog;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace _build;
@@ -14,6 +15,7 @@ partial class Build : NukeBuild
     Target PublishNuget => _ => _
         .DependsOn(Compile)
         .DependsOn(Test)
+        .Produces(PackageOutput / "*")
         .Executes(() =>
         {
             string publishDir = _userConfiguration.DefaultPublishDir;
@@ -28,7 +30,7 @@ partial class Build : NukeBuild
                 DotNetTasks.DotNetPack(s => s
                     .SetProject(projectString)
                     .SetConfiguration(Configuration)
-                    .SetOutputDirectory(_userConfiguration.DefaultPublishDir)
+                    .SetOutputDirectory(PackageOutput)
                     .EnablePublishSingleFile()
                     .EnablePublishReadyToRun()
                     .SetAssemblyVersion(version.ToString())

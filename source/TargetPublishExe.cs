@@ -7,6 +7,8 @@ using Nuke.Common.Tools.GitVersion;
 using System;
 using System.Linq;
 using Serilog;
+using System.IO;
+using Nuke.Common.IO;
 
 namespace _build;
 
@@ -15,7 +17,7 @@ partial class Build : NukeBuild
     Target PublishExe => _ => _
         .DependsOn(Compile)
         .DependsOn(Test)
-        .Produces()
+        .Produces(BinOutput / "*")
         .Executes(() =>
         {
             foreach (string project in _userConfiguration.ExecutablePublishProjects)
@@ -25,11 +27,13 @@ partial class Build : NukeBuild
                 ProjectPropertyElement versionElement = projectRootElement.AllChildren.First(e => e.ElementName == "VersionPrefix") as ProjectPropertyElement;
                 Version version = new Version(versionElement.Value);
 
+                string publishDirectory = RootDirectory / Path.Combine(_userConfiguration.DefaultPublishDir, projectString);
+
                 DotNetTasks.DotNetPublish(s => s
                     .SetProject(projectString)
                     .SetConfiguration(Configuration)
                     .SetFramework(Framework)
-                    .SetOutput(_userConfiguration.DefaultPublishDir)
+                    .SetOutput(publishDirectory)
                     .EnableSelfContained()
                     .EnablePublishSingleFile()
                     .EnablePublishReadyToRun()
@@ -37,6 +41,8 @@ partial class Build : NukeBuild
                     .EnableNoBuild()
                     .SetVersion(version.ToString()));
 
+                string zipLocation = BinOutput / $"{projectString}.zip";
+                CompressionTasks.CompressZip(publishDirectory, zipLocation);
                 try
                 {
                     var output = GitTasks.Git($"tag {project}/{version.Major}.{version.Minor}/{version}", logOutput: true);

@@ -1,5 +1,6 @@
 ﻿using Nuke.Common;
 using Nuke.Common.IO;
+using Nuke.Common.Tools.DotNet;
 using Serilog;
 
 namespace _build;
@@ -16,8 +17,9 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             Log.Logger.Information("Cleaning projects.");
-            FileSystemTasks.EnsureCleanDirectory(_binDir);
-            //DotNetTasks.DotNetClean(c => c.SetProject(Solution));
+            FileSystemTasks.EnsureCleanDirectory(BinDir);
+            FileSystemTasks.EnsureCleanDirectory(RootDirectory / _userConfiguration.DefaultPublishDir);
+            DotNetTasks.DotNetClean(c => c.SetProject(Solution));
             Log.Logger.Information("Completed cleaning projects.");
         });
 }
