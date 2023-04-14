@@ -1,12 +1,9 @@
-﻿using Microsoft.Build.Construction;
-using Nuke.Common;
+﻿using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Serilog;
 using System;
-using System.IO;
-using System.Linq;
 
 namespace _build;
 
@@ -22,10 +19,7 @@ partial class Build : NukeBuild
             foreach (string project in _userConfiguration.NugetPackageProjects)
             {
                 Project projectString = Solution.GetProject(project);
-
-                var projectRootElement = ProjectRootElement.Open(projectString);
-                ProjectPropertyElement versionElement = projectRootElement.AllChildren.First(e => e.ElementName == "VersionPrefix") as ProjectPropertyElement;
-                Version version = new Version(versionElement.Value);
+                var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString);
 
                 DotNetTasks.DotNetPack(s => s
                     .SetProject(projectString)
@@ -33,13 +27,15 @@ partial class Build : NukeBuild
                     .SetOutputDirectory(PackageOutput)
                     .EnablePublishSingleFile()
                     .EnablePublishReadyToRun()
-                    .SetAssemblyVersion(version.ToString())
+                    .SetAssemblyVersion(versionString.ToString())
                     .EnableNoRestore()
                     .EnableNoBuild());
 
                 try
                 {
-                    var output = GitTasks.Git($"tag {project}/{version.Major}.{version.Minor}/{version}", logOutput: true);
+                    var output = GitTasks.Git($"tag {project}/{csprojVersion.Major}.{csprojVersion.Minor}/{versionString}",
+                        logOutput: true,
+                        workingDirectory: RootDirectory);
                 }
                 catch (Exception)
                 {

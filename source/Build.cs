@@ -14,15 +14,7 @@ namespace _build;
     AutoGenerate = true)]
 partial class Build : NukeBuild
 {
-    /// Support plugins are available for:
-    ///   - JetBrains ReSharper        https://nuke.build/resharper
-    ///   - JetBrains Rider            https://nuke.build/rider
-    ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
-    ///   - Microsoft VSCode           https://nuke.build/vscode
-    static AbsolutePath SourceDirectory => RootDirectory / "src";
-    static AbsolutePath OutputDirectory => RootDirectory / "output";
     static AbsolutePath BinDir => RootDirectory / "bin";
-
     static AbsolutePath BinOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "bin";
     static AbsolutePath PackageOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "package";
 

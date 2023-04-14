@@ -1,11 +1,9 @@
-﻿using Microsoft.Build.Construction;
-using Nuke.Common;
+﻿using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitVersion;
 using System;
-using System.Linq;
 using Serilog;
 using System.IO;
 using Nuke.Common.IO;
@@ -23,11 +21,9 @@ partial class Build : NukeBuild
             foreach (string project in _userConfiguration.ExecutablePublishProjects)
             {
                 Project projectString = Solution.GetProject(project);
-                var projectRootElement = ProjectRootElement.Open(projectString);
-                ProjectPropertyElement versionElement = projectRootElement.AllChildren.First(e => e.ElementName == "VersionPrefix") as ProjectPropertyElement;
-                Version version = new Version(versionElement.Value);
+                var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString);
 
-                string publishDirectory = RootDirectory / Path.Combine(_userConfiguration.DefaultPublishDir, projectString);
+                string publishDirectory = RootDirectory / Path.Combine(_userConfiguration.DefaultPublishDir, projectString.Name);
 
                 DotNetTasks.DotNetPublish(s => s
                     .SetProject(projectString)
@@ -36,16 +32,15 @@ partial class Build : NukeBuild
                     .SetOutput(publishDirectory)
                     .EnableSelfContained()
                     .EnablePublishSingleFile()
-                    .EnablePublishReadyToRun()
-                    .EnableNoRestore()
-                    .EnableNoBuild()
-                    .SetVersion(version.ToString()));
+                    .SetVersion(versionString.ToString()));
 
-                string zipLocation = BinOutput / $"{projectString}.zip";
+                string zipLocation = BinOutput / $"{projectString.Name}.zip";
                 CompressionTasks.CompressZip(publishDirectory, zipLocation);
                 try
                 {
-                    var output = GitTasks.Git($"tag {project}/{version.Major}.{version.Minor}/{version}", logOutput: true);
+                    var output = GitTasks.Git($"tag {project}/{csprojVersion.Major}.{csprojVersion.Minor}/{versionString}",
+                        logOutput: true,
+                        workingDirectory: RootDirectory);
                 }
                 catch (Exception)
                 {
