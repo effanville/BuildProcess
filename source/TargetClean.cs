@@ -7,7 +7,13 @@ namespace _build;
 
 partial class Build : NukeBuild
 {
+    Target DiagnosticPrint => _ => _
+        .Executes(() =>
+        {
+            Log.Information("");
+        });
     Target Clean => _ => _
+        .DependsOn(DiagnosticPrint)
         .Executes(() =>
         {
             Log.Logger.Information("Cleaning projects.");

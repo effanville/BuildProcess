@@ -11,6 +11,7 @@ partial class Build : NukeBuild
         {
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(Solution)
+                .SetOutput(RootDirectory / $"bin/{Configuration}")
                 .SetFramework(Framework)
                 .SetConfiguration(Configuration));
         });
