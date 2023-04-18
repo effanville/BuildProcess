@@ -8,7 +8,14 @@ namespace _build;
 [GitHubActions(
     "continuous",
     GitHubActionsImage.WindowsLatest,
-    On = new[] { GitHubActionsTrigger.Push },
+    On = new[] { GitHubActionsTrigger.PullRequest },
+    InvokedTargets = new[] { nameof(Publish) },
+    Submodules = GitHubActionsSubmodules.Recursive,
+    AutoGenerate = true)]
+[GitHubActions(
+    "ReleaseBuild",
+    GitHubActionsImage.WindowsLatest,
+    OnPushBranches = new[] { "develop", "master" },
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
     AutoGenerate = true)]
