@@ -24,9 +24,8 @@ partial class Build : NukeBuild
                 DotNetTasks.DotNetPack(s => s
                     .SetProject(projectString)
                     .SetConfiguration(Configuration)
+                    .SetRuntime(Runtime)
                     .SetOutputDirectory(PackageOutput)
-                    .EnablePublishSingleFile()
-                    .EnablePublishReadyToRun()
                     .SetAssemblyVersion(versionString.ToString())
                     .EnableNoRestore()
                     .EnableNoBuild());

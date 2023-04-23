@@ -1,6 +1,6 @@
 ﻿using Nuke.Common;
+using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.GitVersion;
 
 namespace _build;
 
@@ -15,10 +15,13 @@ partial class Build : NukeBuild
                 .SetProjectFile(Solution)
                 .SetRuntime(Runtime)
                 .SetConfigFile(configFilePath));
-            DotNetTasks.DotNetBuild(s => s
-                .SetProjectFile(Solution)
-                .SetConfiguration(Configuration)
-                .SetFramework(Framework)
-                .EnableNoRestore());
+            foreach (Project project in Solution.Projects)
+            {
+                DotNetTasks.DotNetBuild(s => s
+                    .SetProjectFile(project)
+                    .SetConfiguration(Configuration)
+                    .SetFramework(Framework)
+                    .EnableNoRestore());
+            }
         });
 }
