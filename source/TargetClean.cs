@@ -10,7 +10,7 @@ partial class Build : NukeBuild
     Target DiagnosticPrint => _ => _
         .Executes(() =>
         {
-            Log.Information("");
+            Log.Information($"IsProd build: {IsProd}");
         });
     Target Clean => _ => _
         .DependsOn(DiagnosticPrint)

@@ -19,7 +19,7 @@ partial class Build : NukeBuild
             foreach (string project in _userConfiguration.NugetPackageProjects)
             {
                 Project projectString = Solution.GetProject(project);
-                var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString);
+                var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString, IsProd);
 
                 DotNetTasks.DotNetPack(s => s
                     .SetProject(projectString)

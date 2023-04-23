@@ -39,6 +39,9 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = _userConfiguration.DefaultConfiguration;
 
+    [Parameter("Is this a production release.")]
+    readonly bool IsProd;
+
     public static int Main() => Execute<Build>(x => x.Publish);
 
     Target Publish => _ => _
