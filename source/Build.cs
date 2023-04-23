@@ -22,22 +22,28 @@ namespace _build;
 partial class Build : NukeBuild
 {
     static AbsolutePath BinDir => RootDirectory / "bin";
-    static AbsolutePath BinOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "bin";
-    static AbsolutePath PackageOutput => RootDirectory / _userConfiguration.DefaultPublishDir / "package";
-
-    readonly static UserConfiguration _userConfiguration = new UserConfiguration((RootDirectory / "build.config"));
+    AbsolutePath BinOutput => RootDirectory / PublishDir / "bin";
+    AbsolutePath PackageOutput => RootDirectory / PublishDir / "package";
 
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;
 
     [Parameter("Framework to build with - Current is net6.0.")]
-    readonly string Framework = _userConfiguration.DefaultFramework;
+    readonly string Framework;
 
     [Parameter()]
-    readonly string Runtime = _userConfiguration.DefaultRuntime;
+    readonly string Runtime;
 
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = _userConfiguration.DefaultConfiguration;
+    [Parameter("Configuration to build - Default is 'Debug'")]
+    readonly Configuration Configuration;
+
+    [Parameter("The projects to build as executables.")]
+    readonly string[] ExecutablePublishProjects;
+
+    [Parameter("The projects to build as nuget packages.")]
+    readonly string[] NugetPackageProjects;
+
+    readonly string PublishDir = "Publish";
 
     [Parameter("Is this a production release.")]
     readonly bool IsProd;

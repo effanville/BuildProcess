@@ -15,8 +15,7 @@ partial class Build : NukeBuild
         .Produces(PackageOutput / "*")
         .Executes(() =>
         {
-            string publishDir = _userConfiguration.DefaultPublishDir;
-            foreach (string project in _userConfiguration.NugetPackageProjects)
+            foreach (string project in NugetPackageProjects)
             {
                 Project projectString = Solution.GetProject(project);
                 var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString, IsProd);

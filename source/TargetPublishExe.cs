@@ -18,12 +18,12 @@ partial class Build : NukeBuild
         .Produces(BinOutput / "*")
         .Executes(() =>
         {
-            foreach (string project in _userConfiguration.ExecutablePublishProjects)
+            foreach (string project in ExecutablePublishProjects)
             {
                 Project projectString = Solution.GetProject(project);
                 var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString, IsProd);
 
-                string publishDirectory = RootDirectory / Path.Combine(_userConfiguration.DefaultPublishDir, projectString.Name);
+                string publishDirectory = RootDirectory / Path.Combine(PublishDir, projectString.Name);
 
                 DotNetTasks.DotNetPublish(s => s
                     .SetProject(projectString)
