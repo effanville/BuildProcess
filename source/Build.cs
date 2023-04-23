@@ -15,7 +15,7 @@ namespace _build;
 [GitHubActions(
     "ReleaseBuild",
     GitHubActionsImage.WindowsLatest,
-    OnPushBranches = new[] { "develop", "master" },
+    OnPushBranches = new[] { "master" },
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
     AutoGenerate = true)]
