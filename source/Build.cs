@@ -11,6 +11,7 @@ namespace _build;
     On = new[] { GitHubActionsTrigger.PullRequest },
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
+    FetchDepth = 0,
     AutoGenerate = true)]
 [GitHubActions(
     "ReleaseBuild",
@@ -18,6 +19,7 @@ namespace _build;
     OnPushBranches = new[] { "master" },
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
+    FetchDepth = 0,
     AutoGenerate = true)]
 partial class Build : NukeBuild
 {
