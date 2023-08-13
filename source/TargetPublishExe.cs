@@ -23,7 +23,7 @@ partial class Build : NukeBuild
                 Project projectString = Solution.GetProject(project);
                 var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString, IsProd);
 
-                string publishDirectory = RootDirectory / Path.Combine(PublishDir, projectString.Name);
+                string publishDirectory = RootDirectory / Path.Combine(PublishDir, projectString.Name, versionString);
 
                 DotNetTasks.DotNetPublish(s => s
                     .SetProject(projectString)
