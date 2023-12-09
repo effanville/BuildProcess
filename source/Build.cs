@@ -8,7 +8,7 @@ namespace _build;
 [GitHubActions(
     "continuous",
     GitHubActionsImage.WindowsLatest,
-    On = new[] { GitHubActionsTrigger.PullRequest },
+    On = new[] { GitHubActionsTrigger.PullRequest, GitHubActionsTrigger.WorkflowDispatch },
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
     FetchDepth = 0,
@@ -20,6 +20,7 @@ namespace _build;
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
     FetchDepth = 0,
+    
     AutoGenerate = true)]
 partial class Build : NukeBuild
 {
