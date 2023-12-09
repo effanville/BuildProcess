@@ -54,6 +54,9 @@ partial class Build : NukeBuild
     [Parameter("Is this a production release.")]
     readonly bool IsProd;
 
+    [Parameter("Should this version be tagged")]
+    readonly bool TagRepo;
+
     public static int Main() => Execute<Build>(x => x.Publish);
 
     Target Publish => _ => _

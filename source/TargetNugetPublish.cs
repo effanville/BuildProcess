@@ -29,15 +29,19 @@ partial class Build : NukeBuild
                     .EnableNoRestore()
                     .EnableNoBuild());
 
-                try
+                if (TagRepo)
                 {
-                    var output = GitTasks.Git($"tag {project}/{csprojVersion.Major}.{csprojVersion.Minor}/{versionString}",
-                        logOutput: true,
-                        workingDirectory: RootDirectory);
-                }
-                catch (Exception)
-                {
-                    Log.Warning("Could not create git tag.");
+                    try
+                    {
+                        var output = GitTasks.Git(
+                            $"tag {project}/{csprojVersion.Major}.{csprojVersion.Minor}/{versionString}",
+                            logOutput: true,
+                            workingDirectory: RootDirectory);
+                    }
+                    catch (Exception)
+                    {
+                        Log.Warning("Could not create git tag.");
+                    }
                 }
             }
         });
