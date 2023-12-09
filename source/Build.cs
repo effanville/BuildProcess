@@ -30,7 +30,7 @@ partial class Build : NukeBuild
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;
 
-    [Parameter("Framework to build with - Current is net6.0.")]
+    [Parameter("Framework to build with - Current is net7.0.")]
     readonly string Framework;
 
     [Parameter()]
@@ -38,6 +38,9 @@ partial class Build : NukeBuild
 
     [Parameter("Configuration to build - Default is 'Debug'")]
     readonly Configuration Configuration;
+
+    [Parameter("Projects to run unit tests for")]
+    readonly string[] TestProjects;
 
     [Parameter("The projects to build as executables.")]
     readonly string[] ExecutablePublishProjects;

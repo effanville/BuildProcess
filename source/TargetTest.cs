@@ -9,11 +9,15 @@ partial class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNetTasks.DotNetTest(s => s
-                .SetProjectFile(Solution)
-                .SetFramework(Framework)
-                .EnableNoRestore()
-                .EnableNoBuild()
-                .SetConfiguration(Configuration));
+            foreach (var testProject in TestProjects)
+            {
+                var projectInfo = Solution.GetProject(testProject);
+                DotNetTasks.DotNetTest(s => s
+                    .SetProjectFile(projectInfo)
+                    .SetFramework(Framework)
+                    .EnableNoRestore()
+                    .EnableNoBuild()
+                );
+            }
         });
 }
