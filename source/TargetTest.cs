@@ -16,7 +16,6 @@ partial class Build : NukeBuild
                     .SetProjectFile(projectInfo)
                     .SetFramework(Framework)
                     .EnableNoRestore()
-                    .EnableNoBuild()
                 );
             }
         });
