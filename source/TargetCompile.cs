@@ -4,10 +4,11 @@ using Nuke.Common.Tools.DotNet;
 
 namespace _build;
 
-partial class Build : NukeBuild
+partial class Build
 {
     Target Compile => _ => _
         .DependsOn(Clean)
+        .DependsOn(UpdateVersion)
         .Executes(() =>
         {
             string configFilePath = RootDirectory / "nuget.config";

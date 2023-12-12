@@ -1,27 +1,23 @@
 ﻿using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.Git;
-using Nuke.Common.Tools.GitVersion;
-using System;
-using Serilog;
 using System.IO;
 using Nuke.Common.IO;
 
 namespace _build;
 
-partial class Build : NukeBuild
+partial class Build
 {
     Target PublishExe => _ => _
         .DependsOn(Compile)
-        .DependsOn(Test)
+        //.DependsOn(Test)
         .Produces(BinOutput / "*")
         .Executes(() =>
         {
             foreach (string project in ExecutablePublishProjects)
             {
                 Project projectString = Solution.GetProject(project);
-                var (csprojVersion, versionString) = VersionHelpers.GetVersionFromProject(projectString, IsProd);
+                string versionString = VersionHelpers.GetVersionFromProject(projectString.Path, IsProd);
 
                 string publishDirectory = RootDirectory / Path.Combine(PublishDir, projectString.Name, versionString);
 
@@ -31,25 +27,10 @@ partial class Build : NukeBuild
                     .SetFramework(Framework)
                     .SetOutput(publishDirectory)
                     .EnableSelfContained()
-                    .EnablePublishSingleFile()
-                    .SetVersion(versionString.ToString()));
+                    .EnablePublishSingleFile());
 
                 string zipLocation = BinOutput / $"{projectString.Name}.zip";
                 CompressionTasks.CompressZip(publishDirectory, zipLocation);
-                if (TagRepo)
-                {
-                    try
-                    {
-                        var output = GitTasks.Git(
-                            $"tag {project}/{csprojVersion.Major}.{csprojVersion.Minor}/{versionString}",
-                            logOutput: true,
-                            workingDirectory: RootDirectory);
-                    }
-                    catch (Exception)
-                    {
-                        Log.Warning("Could not create git tag.");
-                    }
-                }
-            }
+            }   
         });
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
@@ -12,7 +13,7 @@ namespace _build;
     InvokedTargets = new[] { nameof(Publish) },
     Submodules = GitHubActionsSubmodules.Recursive,
     FetchDepth = 0,
-    AutoGenerate = true)]
+    AutoGenerate = false)]
 [GitHubActions(
     "ReleaseBuild",
     GitHubActionsImage.WindowsLatest,
@@ -21,7 +22,7 @@ namespace _build;
     Submodules = GitHubActionsSubmodules.Recursive,
     FetchDepth = 0,
     
-    AutoGenerate = true)]
+    AutoGenerate = false)]
 partial class Build : NukeBuild
 {
     static AbsolutePath BinDir => RootDirectory / "bin";
@@ -56,11 +57,12 @@ partial class Build : NukeBuild
 
     [Parameter("Should this version be tagged")]
     readonly bool TagRepo;
-
-    public static int Main() => Execute<Build>(x => x.Publish);
-
-    Target Publish => _ => _
-        .DependsOn(PublishExe)
-        .DependsOn(PublishNuget)
-        .Executes();
+    
+    [Parameter("Should this tag be pushed to the remote")]
+    readonly bool PushTag;
+    
+    GitHubActions _actionsContext => GitHubActions.Instance;
+    string GlobalVersion;
+    HashSet<string> TagVersions = new();
+    public static int Main() => Execute<Build>(x => x.Release);
 }
