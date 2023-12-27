@@ -8,7 +8,7 @@ partial class Build
 {
     Target PublishNuget => _ => _
         .DependsOn(Compile)
-        //.DependsOn(Test)
+        .DependsOn(Test)
         .Produces(PackageOutput / "*")
         .Executes(() =>
         {

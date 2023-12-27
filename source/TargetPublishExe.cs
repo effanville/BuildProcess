@@ -10,7 +10,7 @@ partial class Build
 {
     Target PublishExe => _ => _
         .DependsOn(Compile)
-        //.DependsOn(Test)
+        .DependsOn(Test)
         .Produces(BinOutput / "*")
         .Executes(() =>
         {
