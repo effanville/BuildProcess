@@ -10,8 +10,18 @@ namespace _build
         public static string SetVersion(AbsolutePath projectFile, DateTime timestamp, bool isProd)
         {
             string prefix = string.Empty;
-            string revisionPart = string.Empty;
+            string revisionPart = PrepareVersionSuffix(timestamp, isProd);
+            string versionString = string.Empty;
             var doc = ProjectRootElement.Open(projectFile);
+            var versionElementBase = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "Version");
+            if (versionElementBase is ProjectPropertyElement versionElement)
+            {
+                var currentVersion = versionElement.Value;
+                prefix = PrepareVersionPrefix(currentVersion);
+                versionString = CombinePrefixAndSuffix(prefix, revisionPart, isProd);
+                versionElement.Value = versionString;
+            }
+            
             var versionPrefixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionPrefix");
             if (versionPrefixElement is ProjectPropertyElement element)
             {
@@ -23,30 +33,29 @@ namespace _build
             var versionSuffixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionSuffix");
             if (versionSuffixElement is ProjectPropertyElement suffixElement)
             {
-                revisionPart = PrepareVersionSuffix(timestamp, isProd);
                 suffixElement.Value = revisionPart;
             }
 
             doc.Save();
-            return CombinePrefixAndSuffix(prefix, revisionPart, isProd);
+            return versionString;
         }
 
         static string CombinePrefixAndSuffix(string prefix, string suffix, bool isProd)
         {
-            return isProd ? prefix :  $"{prefix}.{suffix}";
+            return isProd ? prefix :  $"{prefix}-{suffix}";
         }
 
         static string PrepareVersionPrefix(string existingPrefix)
         {
+            string currentPrefix = existingPrefix.Split("-")[0];
             DateTime today = DateTime.Today;
             string prefix = today.ToString("yy.MM.");
             if (existingPrefix.StartsWith(prefix))
             {
-                string buildNumberString = existingPrefix.Substring((existingPrefix.Length - 2));
+                string buildNumberString = existingPrefix.Substring((currentPrefix.Length - 2));
                 if (int.TryParse(buildNumberString, out int buildNumber))
                 {
-                    int newBuildNumber = buildNumber++;
-                    return $"{prefix}{newBuildNumber:00}";
+                    return $"{prefix}{++buildNumber:00}";
                 }
             }
 
