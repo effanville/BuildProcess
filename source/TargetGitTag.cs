@@ -20,16 +20,21 @@ partial class Build
                 GitTasks.Git("add Directory.Build.props", RootDirectory, logOutput: true);
                 GitTasks.Git("add *.csproj", RootDirectory, logOutput: true);
                 GitTasks.Git("add CHANGELOG.md", RootDirectory, logOutput: true);
+                GitTasks.Git("status", RootDirectory, logOutput: true);
                 GitTasks.Git("commit -m \"release: Update version and produce Automated report.\"", RootDirectory, logOutput: true);
                 foreach (string tag in TagVersions)
                 {
+                    Log.Information($"Tagging with version {tag}");
                     GitTasks.Git($"tag {tag}", RootDirectory, logOutput: true);
                 }
 
-                if (PushTag)
+                if (!PushTag)
                 {
-                    GitTasks.Git("push", RootDirectory, logOutput: true);
+                    return;
                 }
+
+                Log.Information($"Pushing everything.");
+                GitTasks.Git("push --tags", RootDirectory, logOutput: true);
             }
             catch (Exception)
             {

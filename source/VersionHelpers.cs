@@ -52,7 +52,7 @@ namespace _build
             string prefix = today.ToString("yy.MM.");
             if (existingPrefix.StartsWith(prefix))
             {
-                string buildNumberString = existingPrefix.Substring((currentPrefix.Length - 2));
+                string buildNumberString = currentPrefix.Substring((currentPrefix.Length - 2));
                 if (int.TryParse(buildNumberString, out int buildNumber))
                 {
                     return $"{prefix}{++buildNumber:00}";
