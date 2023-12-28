@@ -17,7 +17,7 @@ namespace _build
             if (versionElementBase is ProjectPropertyElement versionElement)
             {
                 var currentVersion = versionElement.Value;
-                prefix = PrepareVersionPrefix(currentVersion);
+                prefix = PrepareVersionPrefix(currentVersion, isProd);
                 versionString = CombinePrefixAndSuffix(prefix, revisionPart, isProd);
                 versionElement.Value = versionString;
             }
@@ -26,7 +26,7 @@ namespace _build
             if (versionPrefixElement is ProjectPropertyElement element)
             {
                 var currentVersion = element.Value;
-                prefix = PrepareVersionPrefix(currentVersion);
+                prefix = PrepareVersionPrefix(currentVersion, isProd);
                 element.Value = prefix;
             }
         
@@ -45,7 +45,7 @@ namespace _build
             return isProd ? prefix :  $"{prefix}-{suffix}";
         }
 
-        static string PrepareVersionPrefix(string existingPrefix)
+        static string PrepareVersionPrefix(string existingPrefix, bool isProd)
         {
             string currentPrefix = existingPrefix.Split("-")[0];
             DateTime today = DateTime.Today;
@@ -55,7 +55,9 @@ namespace _build
                 string buildNumberString = currentPrefix.Substring((currentPrefix.Length - 2));
                 if (int.TryParse(buildNumberString, out int buildNumber))
                 {
-                    return $"{prefix}{++buildNumber:00}";
+                    return isProd 
+                        ? $"{prefix}{++buildNumber:00}"
+                        : $"{prefix}{buildNumber:00}";
                 }
             }
 

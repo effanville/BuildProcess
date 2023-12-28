@@ -21,7 +21,7 @@ partial class Build
                 GitTasks.Git("add *.csproj", RootDirectory, logOutput: true);
                 GitTasks.Git("add CHANGELOG.md", RootDirectory, logOutput: true);
                 GitTasks.Git("status", RootDirectory, logOutput: true);
-                GitTasks.Git("commit -m \"release: Update version and produce Automated report.\"", RootDirectory, logOutput: true);
+                GitTasks.Git($"commit -m \"release: Version {GlobalVersion}.\"", RootDirectory, logOutput: true);
                 foreach (string tag in TagVersions)
                 {
                     Log.Information($"Tagging with version {tag}");
