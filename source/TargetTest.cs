@@ -16,6 +16,7 @@ partial class Build : NukeBuild
                     .SetProjectFile(projectInfo)
                     .SetFramework(Framework)
                     .EnableNoRestore()
+                    .AddLoggers("trx;LogFileName=test-results.trx")
                 );
             }
         });
