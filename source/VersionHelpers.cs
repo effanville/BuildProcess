@@ -61,7 +61,7 @@ namespace _build
                 }
             }
 
-            return $"{prefix}01";
+            return $"{prefix}00";
         }
 
         static string PrepareVersionSuffix(DateTime timestamp, bool isProd)
