@@ -16,7 +16,7 @@ partial class Build
             var buildPropsFile = Solution.Directory / "Directory.Build.props";
             string globalVersion = VersionHelpers.SetVersion(buildPropsFile, utcTimeStamp, IsProd);
             GlobalVersion = globalVersion;
-            TagVersions.Add($"v{globalVersion}");
+            TagVersions.Add("GLOBAL", globalVersion);
             Log.Information($"Global version is '{globalVersion}'.");
             var versionedProjects = ExecutablePublishProjects.Union(NugetPackageProjects);
             foreach (string project in versionedProjects)
@@ -29,7 +29,7 @@ partial class Build
                 }
 
                 Log.Information($"Specific project version is '{project}/{version}'.");
-                TagVersions.Add($"{project}/{version}");
+                TagVersions.Add(project, version);
             }
         });
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Nuke.Common;
 using Nuke.Common.Tools.Git;
 using Serilog;
@@ -22,10 +23,11 @@ partial class Build
                 GitTasks.Git("add CHANGELOG.md", RootDirectory, logOutput: true);
                 GitTasks.Git("status", RootDirectory, logOutput: true);
                 GitTasks.Git($"commit -m \"release: Version {GlobalVersion} and changelog update.\"", RootDirectory, logOutput: true);
-                foreach (string tag in TagVersions)
+                foreach (KeyValuePair<string, string> tag in TagVersions)
                 {
-                    Log.Information($"Tagging with version {tag}");
-                    GitTasks.Git($"tag {tag}", RootDirectory, logOutput: true);
+                    string tagValue = tag.Key == "GLOBAL" ? $"v{tag.Value}" : $"{tag.Key}/{tag.Value}";
+                    Log.Information($"Tagging with version {tagValue }");
+                    GitTasks.Git($"tag {tagValue }", RootDirectory, logOutput: true);
                 }
 
                 if (!PushTag)

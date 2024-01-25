@@ -63,6 +63,6 @@ partial class Build : NukeBuild
     
     GitHubActions _actionsContext => GitHubActions.Instance;
     string GlobalVersion;
-    HashSet<string> TagVersions = new();
+    Dictionary<string, string> TagVersions = new();
     public static int Main() => Execute<Build>(x => x.Release);
 }
