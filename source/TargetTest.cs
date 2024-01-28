@@ -17,6 +17,7 @@ partial class Build : NukeBuild
                     .SetFramework(Framework)
                     .EnableNoRestore()
                     .AddLoggers("trx;LogFileName=test-results.trx")
+                    .SetDataCollector("XPlat Code Coverage")
                 );
             }
         });
