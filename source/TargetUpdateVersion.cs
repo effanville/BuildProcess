@@ -23,7 +23,7 @@ partial class Build
             {
                 Project projectString = Solution.GetProject(project);
                 string version = VersionHelpers.SetVersion(projectString?.Path, utcTimeStamp, IsProd);
-                if (string.Equals(version, globalVersion))
+                if (string.IsNullOrEmpty(version) || string.Equals(version, globalVersion))
                 {
                     continue;
                 }
