@@ -36,8 +36,7 @@ partial class Build
                     .SetConfiguration(Configuration)
                     .SetFramework(Framework)
                     .SetOutput(publishDirectory)
-                    .EnableSelfContained()
-                    .EnablePublishSingleFile());
+                    .EnableSelfContained());
 
                 string zipLocation = BinOutput / $"{projectString.Name}.zip";
                 CompressionTasks.CompressZip(publishDirectory, zipLocation);
