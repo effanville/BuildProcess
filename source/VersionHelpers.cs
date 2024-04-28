@@ -11,7 +11,7 @@ namespace _build
         {
             string prefix = string.Empty;
             string revisionPart = PrepareVersionSuffix(timestamp, isProd);
-            string versionString = string.Empty;
+            string versionString = null;
             var doc = ProjectRootElement.Open(projectFile);
             var versionElementBase = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "Version");
             if (versionElementBase is ProjectPropertyElement versionElement)
@@ -70,26 +70,6 @@ namespace _build
             return isProd
                 ? string.Empty
                 : revisionPart;
-        }
-
-        public static string GetVersionFromProject(AbsolutePath projectFile, bool isProd)
-        {
-            string prefix = string.Empty;
-            string revisionPart = string.Empty;
-            var doc = ProjectRootElement.Open(projectFile);
-            var versionPrefixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionPrefix");
-            if (versionPrefixElement is ProjectPropertyElement element)
-            {
-                prefix = element.Value;
-            }
-        
-            var versionSuffixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionSuffix");
-            if (versionSuffixElement is ProjectPropertyElement suffixElement)
-            {
-                revisionPart = suffixElement.Value;
-            }
-
-            return CombinePrefixAndSuffix(prefix, revisionPart, isProd);
         }
     }
 }
