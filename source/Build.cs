@@ -41,9 +41,6 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug'")]
     readonly Configuration Configuration;
 
-    [Parameter("Projects to run unit tests for")]
-    readonly string[] TestProjects;
-
     [Parameter("The projects to build as executables.")]
     readonly string[] ExecutablePublishProjects;
 
@@ -61,7 +58,6 @@ partial class Build : NukeBuild
     [Parameter("Should this tag be pushed to the remote")]
     readonly bool PushTag;
     
-    GitHubActions _actionsContext => GitHubActions.Instance;
     string GlobalVersion;
     Dictionary<string, string> TagVersions = new();
     public static int Main() => Execute<Build>(x => x.Release);

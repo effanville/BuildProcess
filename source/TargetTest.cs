@@ -9,16 +9,11 @@ partial class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            foreach (var testProject in TestProjects)
-            {
-                var projectInfo = Solution.GetProject(testProject);
-                DotNetTasks.DotNetTest(s => s
-                    .SetProjectFile(projectInfo)
-                    .SetFramework(Framework)
-                    .EnableNoRestore()
-                    .AddLoggers("trx;LogFileName=test-results.trx")
-                    .SetDataCollector("XPlat Code Coverage")
-                );
-            }
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(Solution)
+                .SetFramework(Framework)
+                .EnableNoRestore()
+                .AddLoggers("trx;LogFileName=test-results.trx")
+                .SetDataCollector("XPlat Code Coverage"));
         });
 }
