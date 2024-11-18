@@ -4,6 +4,7 @@ using Nuke.Common.Tools.DotNet;
 using System.IO;
 using Nuke.Common.IO;
 using Serilog;
+using System.Linq;
 
 namespace _build;
 
@@ -39,7 +40,7 @@ partial class Build
                     .EnableSelfContained());
 
                 string zipLocation = BinOutput / $"{projectString.Name}.zip";
-                CompressionTasks.CompressZip(publishDirectory, zipLocation);
+                ((AbsolutePath)publishDirectory).ZipTo(zipLocation);
             }
         });
 }

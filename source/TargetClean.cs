@@ -17,8 +17,8 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             Log.Logger.Information("Cleaning projects.");
-            FileSystemTasks.EnsureCleanDirectory(BinDir);
-            FileSystemTasks.EnsureCleanDirectory(RootDirectory / PublishDir);
+            BinDir.CreateOrCleanDirectory();
+            (RootDirectory / PublishDir).CreateOrCleanDirectory();
             DotNetTasks.DotNetClean(c => c.SetProject(Solution));
             Log.Logger.Information("Completed cleaning projects.");
         });
