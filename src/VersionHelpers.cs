@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Linq;
+
 using Microsoft.Build.Construction;
-using Nuke.Common.IO;
+
 
 namespace _build
 {
     class VersionHelpers
     {
-        public static string SetVersion(AbsolutePath projectFile, DateTime timestamp, bool isProd)
+        public static string SetVersion(string projectFile, DateTime timestamp, bool isProd)
         {
             string prefix = string.Empty;
             string revisionPart = PrepareVersionSuffix(timestamp, isProd);
             string versionString = null;
             var doc = ProjectRootElement.Open(projectFile);
-            var versionElementBase = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "Version");
+            var versionElementBase = doc.AllChildren.FirstOrDefault(child => child.ElementName == "Version");
             if (versionElementBase is ProjectPropertyElement versionElement)
             {
                 var currentVersion = versionElement.Value;
@@ -21,16 +22,16 @@ namespace _build
                 versionString = CombinePrefixAndSuffix(prefix, revisionPart, isProd);
                 versionElement.Value = versionString;
             }
-            
-            var versionPrefixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionPrefix");
+
+            var versionPrefixElement = doc.AllChildren.FirstOrDefault(child => child.ElementName == "VersionPrefix");
             if (versionPrefixElement is ProjectPropertyElement element)
             {
                 var currentVersion = element.Value;
                 prefix = PrepareVersionPrefix(currentVersion, isProd);
                 element.Value = prefix;
             }
-        
-            var versionSuffixElement = doc.AllChildren.FirstOrDefault(child =>child.ElementName == "VersionSuffix");
+
+            var versionSuffixElement = doc.AllChildren.FirstOrDefault(child => child.ElementName == "VersionSuffix");
             if (versionSuffixElement is ProjectPropertyElement suffixElement)
             {
                 suffixElement.Value = revisionPart;
@@ -42,7 +43,7 @@ namespace _build
 
         static string CombinePrefixAndSuffix(string prefix, string suffix, bool isProd)
         {
-            return isProd ? prefix :  $"{prefix}-{suffix}";
+            return isProd ? prefix : $"{prefix}-{suffix}";
         }
 
         static string PrepareVersionPrefix(string existingPrefix, bool isProd)
@@ -55,7 +56,7 @@ namespace _build
                 string buildNumberString = currentPrefix.Substring((currentPrefix.Length - 2));
                 if (int.TryParse(buildNumberString, out int buildNumber))
                 {
-                    return isProd 
+                    return isProd
                         ? $"{prefix}{++buildNumber:00}"
                         : $"{prefix}{buildNumber:00}";
                 }
