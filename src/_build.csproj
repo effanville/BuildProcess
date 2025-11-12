@@ -13,7 +13,7 @@
     <PackageReference Include="Cake.Frosting" Version="5.0.0" />
     <PackageReference Include="Cake.Git" Version="5.0.1" />
     <PackageReference Include="Cake.Npm" Version="5.1.0" />
-    <PackageReference Include="Microsoft.Build" Version="17.14.8" />
+    <PackageReference Include="Microsoft.Build" Version="17.14.28" />
   </ItemGroup>
 
   <ItemGroup>
