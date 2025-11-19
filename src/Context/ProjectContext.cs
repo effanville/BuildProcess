@@ -15,7 +15,7 @@ public class ProjectContext
     public ProjectContext(DirectoryPath rootDirectory, string projectName)
     {
         ProjectName = projectName;
-        FilePath = Directory.EnumerateFiles(rootDirectory.FullPath, $"{projectName}.csproj", SearchOption.AllDirectories).First();
+        FilePath = Directory.GetFiles(rootDirectory.FullPath, $"{projectName}.csproj", SearchOption.AllDirectories)?.First();
         FolderName = FilePath.GetDirectory();
     }
 
