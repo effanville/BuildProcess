@@ -31,7 +31,7 @@ public sealed class PublishExe : FrostingTask<BuildContext>
             {
                 versionString = context.VersionInfo.GlobalVersion;
             }
-            DirectoryPath outputDir = publishContext.PublishDir + context.Directory(versionString);
+            DirectoryPath outputDir = publishContext.PublishDir.Combine(context.Directory(versionString));
 
             DotNetPublishSettings settings = new DotNetPublishSettings()
             {
@@ -45,7 +45,8 @@ public sealed class PublishExe : FrostingTask<BuildContext>
             DotNetAliases.DotNetPublish(context, project.FilePath.FullPath, settings);
 
             FilePath zipLocation = context.PublishInfo.BinOutput.CombineWithFilePath($"{project.ProjectName}.zip");
-            ZipAliases.Zip(context, publishContext.PublishDir, zipLocation);
+            System.IO.Directory.CreateDirectory(context.PublishInfo.BinOutput.FullPath);
+            ZipAliases.Zip(context, outputDir, zipLocation);
         }
     }
 }

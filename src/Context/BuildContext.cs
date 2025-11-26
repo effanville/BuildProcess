@@ -1,4 +1,7 @@
-﻿using _build.Config;
+﻿using System;
+using System.Linq;
+
+using _build.Config;
 
 using Cake.Common.IO;
 using Cake.Core;
@@ -27,7 +30,11 @@ public class BuildContext : FrostingContext
         : base(context)
     {
         RootDirectory = context.MakeAbsolute(context.Directory("../../"));
-        var config = ConfigParser.ReadConfig(RootDirectory.CombineWithFilePath("build.config").FullPath);
+        UserConfig? config = ConfigParser.ReadConfig(RootDirectory.CombineWithFilePath("build.config").FullPath);
+        if (config == null)
+        {
+            throw new ArgumentException($"{nameof(UserConfig)} not specified.");
+        }
 
         SolutionInfo = new SolutionContext(RootDirectory, config?.SolutionName);
 
@@ -47,6 +54,10 @@ public class BuildContext : FrostingContext
         DirectoryPath publishLocation = publishDir.IsRelative
             ? context.MakeAbsolute(RootDirectory.Combine(publishDir))
             : publishDir;
-        PublishInfo = new PublishContext(RootDirectory, publishLocation, nugetPackages, exeProjects);
+
+        PathCollection ex = context.GetPaths(publishLocation.FullPath);
+        Path? path = ex.FirstOrDefault();
+        var data = path as DirectoryPath;
+        PublishInfo = new PublishContext(RootDirectory, data, nugetPackages, exeProjects);
     }
 }
