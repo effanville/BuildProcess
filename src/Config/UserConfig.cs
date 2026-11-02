@@ -25,6 +25,7 @@ public sealed class UserConfig
 
     public bool TagRepo { get; set; } = true;
     public bool PushTag { get; set; } = false;
+    public bool IsProd { get; set; } = false;
 }
 
 public static class ConfigParser

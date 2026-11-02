@@ -44,7 +44,7 @@ public class BuildContext : FrostingContext
         string nugetPublishDir = context.Arguments.GetArgument("publishDir") ?? $"{config.PublishDir}/{config.SolutionName}";
 
         Runtime = context.Arguments.GetArgument("runtime") ?? config.Runtime;
-        IsProd = context.Arguments.HasArgument("isProd");
+        IsProd = context.Arguments.HasArgument("isProd") ? true : config.IsProd;
 
         TagRepo = context.Arguments.HasArgument("TagRepo") ? true : config.TagRepo;
 
